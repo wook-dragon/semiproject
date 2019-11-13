@@ -11,6 +11,13 @@ public class emp {
 	private int sal;
 	private int comm;
 	private int deptno;
+	private String filepath;
+	public String getFilepath() {
+		return filepath;
+	}
+	public void setFilepath(String filepath) {
+		this.filepath = filepath;
+	}
 	public int getEmpno() {
 		return empno;
 	}
@@ -62,7 +69,8 @@ public class emp {
 	@Override
 	public String toString() {
 		return "emp [empno=" + empno + ", ename=" + ename + ", job=" + job + ", mgr=" + mgr + ", hiredate=" + hiredate
-				+ ", sal=" + sal + ", comm=" + comm + ", deptno=" + deptno + "]";
+				+ ", sal=" + sal + ", comm=" + comm + ", deptno=" + deptno + ", filepath=" + filepath + "]";
 	}
+	
 	
 }
