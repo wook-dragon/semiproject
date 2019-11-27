@@ -23,18 +23,24 @@ public class LoginService implements Action{
       
       //3. 처리
       MemberDao memberdao = new MemberDao();
-      Boolean isLogin = memberdao.Login(id, pwd);
+      int isLogin = memberdao.Login(id, pwd);
          
       String board_msg = "";
       String board_url = "";
          
-      if(isLogin) { //id와 pwd가 맞으면..
+      if(isLogin==1) { //id와 pwd가 맞으면..
          //세션 가져와서 login 정보 저장
          HttpSession session = request.getSession();
          session.setAttribute("id",id);
-         
+         session.setAttribute("grade", isLogin);
          board_msg = "로그인 성공";
          board_url = request.getContextPath()+"/index.jsp";
+      }else if(isLogin==2) {
+    	  HttpSession session = request.getSession();
+          session.setAttribute("id",id);
+          session.setAttribute("grade", isLogin);
+          board_msg = "로그인 성공";
+          board_url = request.getContextPath()+"/index.jsp";
       }else {
          board_msg = "로그인 실패, 다시 시도해 주세요.";
          board_url = "LogIn.do";

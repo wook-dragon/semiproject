@@ -31,7 +31,7 @@ public class MyInfoEditOkService implements Action{
 			member.setName(name);
 			member.setHp(hp);
 			MemberDao dao = new MemberDao();
-			 int result = dao.memberEdit(member);
+			 int result = dao.myMemberEdit(member);
 			  	  
 			  	  String msg="";
 			  	  String url="";

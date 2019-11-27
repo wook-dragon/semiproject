@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -106,7 +107,7 @@ public class MemberDao {
 			String sql = "select id, pwd, name, hp, grade from member";
 			pstmt = conn.prepareStatement(sql);
 			rs = pstmt.executeQuery();	
-			if(rs.next()) {
+			while(rs.next()) {
 				member = new Member();
 				member.setId(rs.getString("id"));
 				member.setPwd(rs.getString("pwd"));
@@ -191,7 +192,7 @@ public class MemberDao {
 			}
 			return member;
 	}
-	public int memberEdit(Member member) {		//회원 수정 (이름,hp,비밀번호)
+	public int myMemberEdit(Member member) {		//회원 수정 (이름,hp,비밀번호)
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		int resultrow = 0;
@@ -219,8 +220,8 @@ public class MemberDao {
 			return resultrow;
 	}
 
-	public Boolean Login(String id, String pwd) {
-		boolean isLogin = false;
+	public int Login(String id, String pwd) {
+		int isLogin = 0;
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -228,14 +229,22 @@ public class MemberDao {
 		try {
 			conn = ds.getConnection();
 			
-			String sql = "select id from member where id=? and pwd=?";
+			String sql = "select id, grade from member where id=? and pwd=?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, id);
 			pstmt.setString(2, pwd);
 			
 			rs = pstmt.executeQuery();
 			if(rs.next()) { //맞는 데이터가 있으면
-				isLogin = true;
+				int grade = (rs.getInt("grade"));
+				if(grade==1) {
+					isLogin = 1;
+				}else if(grade==2) {
+					isLogin =2;
+				}else {
+					isLogin=0;
+				}
+				
 			}
 			
 			} catch (Exception e) {
@@ -250,8 +259,162 @@ public class MemberDao {
 		}
 		return isLogin;
 	}
+	public Member getMemberDetail(String id) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		Member member = new Member();
+		try {
+			conn = ds.getConnection();
+			String sql = "select id, pwd, name, hp, grade from member where id=?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, id);
+			rs = pstmt.executeQuery();	
+			
+			while(rs.next()) {
+				member = new Member();
+				member.setId(rs.getString("id"));
+				member.setPwd(rs.getString("pwd"));
+				member.setName(rs.getString("name"));
+				member.setHp(rs.getString("hp"));
+				member.setGrade(rs.getInt("grade")); 
+			} 
+							
+			} catch (Exception e) {
+				e.printStackTrace();
+			}finally{
+				try {
+					pstmt.close();
+					conn.close();//반환
+					rs.close();
+				}catch (Exception e) {
+			}
+		}
+			return member;
+	}
+
+	public Member getById(String id) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		Member member = new Member();
+		try {
+			conn = ds.getConnection();
+			String sql = "select id, pwd, name, hp, grade from member where id=?";
+			
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, id);
+			
+			rs = pstmt.executeQuery();
+			while(rs.next()) { //맞는 데이터가 있으면
+				member = new Member();
+				member.setId(rs.getString("id"));
+				member.setPwd(rs.getString("pwd"));
+				member.setName(rs.getString("name"));
+				member.setHp(rs.getString("hp"));
+				member.setGrade(rs.getInt("grade")); 
+			} 
+			
+			} catch (Exception e) {
+				e.printStackTrace();
+			}finally{
+				try {
+					pstmt.close();
+					conn.close();//반환
+					rs.close();
+				}catch (Exception e) {
+			}
+		}
+		return member;
+	}
+
+	public int memberDelete(String id) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		int resultrow = 0;
 		
-	
+		try {
+			conn = ds.getConnection();
+			
+			String sql = "update member set grade=? where id=?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, 0);
+			pstmt.setString(2, id);
+		
+			resultrow = pstmt.executeUpdate();				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}finally{
+				try {
+					pstmt.close();
+					conn.close();//반환
+			}catch (Exception e) {
+			}
+		}
+		return resultrow;
+	}
+
+	public List<Member> getByName(String name) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		ArrayList<Member> memberlist = new ArrayList<>();
+		try {
+			conn = ds.getConnection();
+			String sql = "select id, pwd, name, hp, grade from member where name like ?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, "%"+name+"%");
+			System.out.println(pstmt);
+			rs = pstmt.executeQuery();
+			while(rs.next()) { //맞는 데이터가 있으면
+				Member member = new Member();
+				member.setId(rs.getString("id"));
+				member.setPwd(rs.getString("pwd"));
+				member.setName(rs.getString("name"));
+				member.setHp(rs.getString("hp"));
+				member.setGrade(rs.getInt("grade"));
+				memberlist.add(member);
+			} 
+			} catch (Exception e) {
+				e.printStackTrace();
+			}finally{
+				try {
+					pstmt.close();
+					conn.close();//반환
+					rs.close();
+				}catch (Exception e) {
+			}
+		}
+		return memberlist;
+	}
+	public int memberEdit(Member member) {		//(관리자용)회원 수정 (이름,hp,비밀번호)
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		int resultrow = 0;
+		
+		try {
+			conn = ds.getConnection();
+			
+			String sql = "update member set pwd=?, name=?, hp=?, grade=? where id=?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, member.getPwd());
+			pstmt.setString(2, member.getName());
+			pstmt.setString(3, member.getHp());
+			pstmt.setInt(4, member.getGrade());
+			pstmt.setString(5, member.getId());
+			
+			resultrow = pstmt.executeUpdate();				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}finally{
+				try {
+					pstmt.close();
+					conn.close();//반환
+				}catch (Exception e) {
+				}
+			}
+			return resultrow;
+	}
 	
 		
 		

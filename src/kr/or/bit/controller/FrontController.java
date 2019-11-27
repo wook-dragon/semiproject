@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import kr.or.bit.action.Action;
 import kr.or.bit.action.ActionForward;
 import kr.or.bit.service.DetailCrossService;
+import kr.or.bit.service.IdCheckService;
 import kr.or.bit.service.ListCrossService;
 import kr.or.bit.service.LoginService;
 import kr.or.bit.service.LogoutService;
@@ -23,6 +24,13 @@ import kr.or.bit.service.SignUpService;
 import kr.or.bit.service.ZzimListDeleteService;
 import kr.or.bit.service.ZzimListInsertService;
 import kr.or.bit.service.ZzimListService;
+import kr.or.bit.service.idService;
+import kr.or.bit.service.memberDeleteService;
+import kr.or.bit.service.memberDetailService;
+import kr.or.bit.service.memberEditOkService;
+import kr.or.bit.service.memberEditService;
+import kr.or.bit.service.memberListService;
+import kr.or.bit.service.nameService;
 import kr.or.bit.service.ReviewListService;
 import kr.or.bit.service.ReviewWriteService;
 
@@ -51,6 +59,9 @@ public class FrontController extends HttpServlet {
           //UI처리 
           forward = new ActionForward();
           forward.setPath("/searchresult.jsp");
+       }else if(url_Command.equals("/GoMain.do")) { 
+           forward = new ActionForward();
+           forward.setPath("/index.jsp");
        }else if(url_Command.equals("/CampinglistCrossCK.do")) { // 캠핑 API list cross체크 처리
           //UI처리 + 로직처리 
          action = new ListCrossService();
@@ -103,7 +114,77 @@ public class FrontController extends HttpServlet {
 			} catch (NamingException e) {
 				e.printStackTrace();
 			}
-       }else if(url_Command.equals("/ZzimListSearch.do")) { // 캠핑 API detail cross체크 처리
+       }else if(url_Command.equals("/SignUpCom.do")) { 
+           forward = new ActionForward();
+           forward.setPath("/signUpOk.jsp");
+       }else if(url_Command.equals("/IdCheck.do")) { 
+    	   action = new IdCheckService();
+    	   try {
+			forward = action.execute(request, response);
+		} catch (NamingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+       }else if(url_Command.equals("/MemberList.do")) {
+           forward = new ActionForward();
+           forward.setPath("/memberList.jsp");
+     }else if(url_Command.equals("/GetMemberList.do")) {
+			action = new memberListService();
+			try {
+				forward = action.execute(request, response);
+			} catch (NamingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+     }else if(url_Command.equals("/MemberDetail.do")) {
+			action = new memberDetailService();
+			try {
+				forward = action.execute(request, response);
+			} catch (NamingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+     }else if(url_Command.equals("/MemberEdit.do")) {
+			action = new memberEditService();
+			try {
+				forward = action.execute(request, response);
+			} catch (NamingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+     }else if(url_Command.equals("/MemberEditOk.do")) {
+			action = new memberEditOkService();
+			try {
+				forward = action.execute(request, response);
+			} catch (NamingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+     }else if(url_Command.equals("/MemberDelete.do")) {
+			action = new memberDeleteService();
+			try {
+				forward = action.execute(request, response);
+			} catch (NamingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    }else if(url_Command.equals("/idsearch.do")) {
+			action = new idService();
+			try {
+				forward = action.execute(request, response);
+			} catch (NamingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    }else if(url_Command.equals("/namesearch.do")) {
+			action = new nameService();
+			try {
+				forward = action.execute(request, response);
+			} catch (NamingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    }else if(url_Command.equals("/ZzimListSearch.do")) { // 캠핑 API detail cross체크 처리
            //UI처리 + 로직처리
            action = new ZzimListService();
            try {
